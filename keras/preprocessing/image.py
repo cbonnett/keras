@@ -574,6 +574,7 @@ class DirectoryIterator(Iterator):
         # The transformation of images is not under thread lock so it can be done in parallel
         batch_x = np.zeros((current_batch_size,) + self.image_shape)
         
+        ### minor adaptions so that is also looks for nyp file with the same name 
         temp_aux_fname = self.filenames[0][:-4] + '.npy'
         aux_dimension = np.load(os.path.join(self.directory, temp_aux_fname)).shape
         batch_aux_x = np.zeros((current_batch_size, aux_dimension[0]))
@@ -588,6 +589,7 @@ class DirectoryIterator(Iterator):
             x = self.image_data_generator.standardize(x)
             batch_x[i] = x
             
+            # the auxiallary data in .npy file 
             aux_fname =  os.path.join(self.directory, fname[:-4] + '.npy')
             batch_aux_x[i] = np.squeeze(np.load(aux_fname))
         
@@ -610,5 +612,6 @@ class DirectoryIterator(Iterator):
             for i, label in enumerate(self.classes[index_array]):
                 batch_y[i, label] = 1.
         else:
-            return batch_x
+            return batch_x 
+        # return the batch_x and batch_aux_x
         return [batch_x, batch_aux_x], batch_y
